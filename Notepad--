@@ -1,0 +1,111 @@
+from tkinter import *
+from tkinter import ttk
+
+modinuse=""
+bold = False
+underline = False
+italic = False
+
+root = Tk()
+root.title("Notepad")
+root.columnconfigure(0, weight=1)
+root.rowconfigure(0, weight=1)
+
+mainframe = ttk.Frame(root, padding="3 3 3 3",borderwidth = 2)
+mainframe.grid(column=0, row=0, sticky=(N, W, E, S))
+
+labelMod = ttk.Label(mainframe, text="Mod in use: None")
+labelMod.grid(row = 1, column = 0, columnspan = 7, sticky=(W,E))
+
+def modlistupdate():
+  global modinuse
+  labelMod["text"] = ("Mod in use: " + modinuse)
+def newline():
+  Text["state"] = "normal"
+  Text.insert("end","\n", "normal")
+  Text["state"] = "disabled"
+def addmodbold():
+  end("noupdate")
+  global modinuse
+  modinuse = "Bold"
+  global bold
+  bold = True
+  modlistupdate()
+def addmodunderline():
+  end("noupdate")
+  global modinuse
+  modinuse = "Underline"
+  global underline
+  underline = True
+  modlistupdate()
+def addmoditalic():
+  end("noupdate")
+  global modinuse
+  modinuse = "Italic"
+  global italic 
+  italic = True
+  modlistupdate()
+def end(*args):
+  global bold
+  global underline
+  global italic
+  bold = False
+  underline = False
+  italic = False
+  if args != "noupdate":
+    global modinuse
+    modinuse = "None"
+    modlistupdate()
+
+Text = Text(mainframe, width =(mainframe.winfo_width()), state="disabled", wrap="none")
+Text.grid(row = 2, column = 0, columnspan = 7, stick = (W,E))
+ys = ttk.Scrollbar(root, orient = 'vertical', command = Text.yview)
+xs = ttk.Scrollbar(root, orient = 'horizontal', command = Text.xview)
+Text['yscrollcommand'] = ys.set
+Text['xscrollcommand'] = xs.set
+xs.grid(column = 0, row = 2, sticky = 'we')
+ys.grid(column = 7, row = 0, sticky = 'ns')
+Text.tag_configure("normal", font=("Arial", 10))
+Text.tag_configure('bold', font=('Arial', 10, 'bold'))
+Text.tag_configure("underline", font=("arial", 10, "underline"))
+
+def rem(*args):
+  Text["state"] = "normal"
+  Text.delete("end-2c")
+  Text["state"] = "disabled"
+
+button1 = ttk.Button(mainframe, text="Newline", command = newline)
+button1.grid(row = 0, column = 0)
+button2 = ttk.Button(mainframe, text="Remove", command=rem)
+button2.grid(row=0,column=1)
+button4 = ttk.Button(mainframe, text="Bold", command = addmodbold )
+button4.grid(row = 0, column = 2)
+button5 = ttk.Button(mainframe, text="Underline", command = addmodunderline)
+button5.grid(row = 0, column = 3)
+button6 = ttk.Button(mainframe, text="Italic", command = addmoditalic)
+button6.grid(row = 0, column = 4)
+button7 = ttk.Button(mainframe, text="End", command = end)
+button7.grid(row = 0, column = 5)
+
+theText = Text.get("1.0", "end")
+textVar = StringVar()
+entry = ttk.Entry(mainframe, textvariable = textVar)
+entry.grid(row = 3, column = 0, columnspan = 7, sticky =(W,E))
+
+def add(*args):
+  global bold
+  global underline
+  if bold == True:
+    Text["state"] = "normal"
+    Text.insert("end", textVar.get(), "bold")
+    Text["state"] = "disabled"
+  elif underline == True:
+    Text["state"] = "normal"
+    Text.insert("end", textVar.get(), "underline")
+  else:
+    Text["state"] = "normal"
+    Text.insert("end", textVar.get(), "normal")
+    Text["state"] = "disabled"
+
+entry.bind("<Return>", add)
+root.mainloop()
